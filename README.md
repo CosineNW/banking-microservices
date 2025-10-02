@@ -1,105 +1,145 @@
 # 🏦 Banking Microservices
 
-A fully modular, observable, and scalable backend architecture for a fictional banking system. Built with Spring Boot, Kafka, Docker Compose, and integrated observability using Prometheus, Grafana, and OpenTelemetry.
+A modular, observable, and scalable backend for a fictional banking system. It uses Spring Boot microservices with Kafka for messaging and Docker Compose for local orchestration. Observability is provided via OpenTelemetry, Prometheus, and Grafana.
 
 ---
 
-## 📦 Microservices
+## 📦 Services
 
-| Service           | Description                             |
-|-------------------|-----------------------------------------|
-| `transaction-service` | Handles customer transactions and events |
-| `account-service`     | Manages account creation and details   |
-| `notification-service`| Sends email/SMS alerts via Kafka events|
-| `customer-service`    | CRUD operations for customer profiles  |
-| `gateway-service`     | API Gateway routing and security       |
-| `discovery-service`   | Service registry using Eureka          |
+The repository currently includes the following services:
+
+| Service                | Port (host) | Description                                      |
+|------------------------|-------------|--------------------------------------------------|
+| `customer-service`     | 8181        | Customer profile CRUD                            |
+| `transaction-service`  | 8182        | Customer transactions and events                 |
+| `reward-service`       | 8183        | Rewards processing (Kafka consumer + MySQL)      |
+| `notification-service` | 8184        | Sends notifications based on Kafka events        |
+| `gateway-service`      | 8185        | API Gateway (Spring Cloud Gateway)               |
+| `preference-service`   | 8186        | User preferences (Kafka consumer)                |
+| `service-registry`     | 8762        | Eureka service registry (container 8761 -> host 8762) |
+
+Infrastructure components:
+
+- Kafka (9092) and Zookeeper (2181)
+- MySQL (host 3307)
+- OpenTelemetry Collector (host 4319 -> container 4318)
+- Prometheus (9090)
+- Grafana (3000)
 
 ---
 
 ## 🚀 Features
 
-- Kafka-based event-driven communication across microservices
-- OpenTelemetry-based distributed tracing
-- Metrics collection with Prometheus
-- Dashboards via Grafana
-- Docker Compose orchestration for local testing
-- Clean code structure with modular DTOs and error handling
+- Event-driven communication via Apache Kafka
+- Distributed tracing with OpenTelemetry (OTLP)
+- Metrics via Prometheus with Grafana dashboards
+- Docker Compose for one-command local setup
+- Clear separation of concerns across services
 
 ---
 
 ## 🧰 Tech Stack
 
-- **Spring Boot** (Java 17)
-- **Apache Kafka**
-- **Docker & Docker Compose**
-- **Prometheus & Grafana**
-- **OpenTelemetry Collector**
-- **Spring Cloud Gateway + Eureka Discovery**
+- Spring Boot (Java 17)
+- Apache Kafka
+- MySQL
+- Docker & Docker Compose
+- Prometheus & Grafana
+- OpenTelemetry Collector
+- Spring Cloud Gateway + Eureka
 
 ---
 
 ## 📊 Observability Architecture
 
-[Microservices] → [OpenTelemetry Collector] → [Prometheus] → [Grafana] | [Jaeger or OTEL backend]
+Microservices → OpenTelemetry Collector → Prometheus → Grafana
 
-
-Each microservice is instrumented for tracing and exposes Prometheus-compatible metrics for seamless debugging and visualization.
+Each service is set up for tracing/metrics. Prometheus scrapes metrics and Grafana visualizes them.
 
 ---
 
-## 🧪 Running Locally
+## ✅ Prerequisites
+
+- Docker and Docker Compose
+- Java 17 (for local builds if you’re not building inside Docker)
+- Maven (if you build locally)
+
+---
+
+## 🧪 Quick Start
+
+From the Infra directory:
 
 ```bash
-# Build all services
-./mvn clean build
+cd Infra
 
-# Start entire stack
- docker compose up --build ```
+# Start the entire stack (in the foreground)
+docker compose up --build
 
+# Or start detached
+docker compose up --build -d
+```
 
- 📈 Grafana: http://localhost:3000
+Key endpoints once the stack is up:
 
-🔍 Eureka Dashboard: http://localhost:8761
+- Grafana: http://localhost:3000
+- Prometheus: http://localhost:9090
+- Eureka Dashboard (service registry): http://localhost:8762
+- API Gateway: http://localhost:8185
+- Kafka broker: localhost:9092
+- MySQL: localhost:3307 (user: root, password: root)
 
-📡 Gateway: http://localhost:8080
+Notes:
+- Databases created by the initializer: customerdb, transactiondb, rewarddb.
+- The OpenTelemetry Collector is exposed on host port 4319.
+- If the OTEL collector config path in docker-compose is machine-specific, adjust the volume mapping in Infra/docker-compose.yml.
+
+---
 
 ## 📚 Repository Layout
 
-  banking-microservices/
-├── transaction-service/
-├── account-service/
-├── notification-service/
+```
+.
+├── Infra/
+│   ├── docker-compose.yml
+│   ├── infra/
+│   │   └── prometheus/
+│   │       └── prometheus.yml
+│   ├── mysql-init/        # Optional init scripts
+│   └── otel-config.yml    # OpenTelemetry Collector config
 ├── customer-service/
 ├── gateway-service/
-├── discovery-service/
-├── docker-compose.yml
-└── README.md
+├── notification-service/
+├── preference-service/
+├── reward-service/
+├── service-registry/
+└── transaction-service/
+```
 
-Each service contains:
+Each service typically contains:
+- src: Spring Boot source
+- config: Kafka/OTel configuration (if applicable)
+- Dockerfile: Containerization
 
-/src: Spring Boot source
-
-/config: Kafka & OpenTelemetry setup
-
-Dockerfile: Containerization
+---
 
 ## 📝 Project Goals
-  ✅ Documented and modular microservices
 
-  ✅ Push code to GitHub with structure
+- Documented and modular microservices
+- Validated locally with Docker Compose
+- Planned: CI/CD and deployment to AWS/GCP
 
-  ✅ Validate system with Docker Compose
-
-  🧭 Deploy to AWS or GCP (planned)
-
-  🔁 Implement CI/CD (planned)
+---
 
 ## 🧠 Maintainer
-    Arun, a backend engineer obsessed with clarity, reliability, and observability. 📌 Expertise in Kafka, tracing, and scalable system design.
 
-## 💡 Contributing
-    PRs and issues welcome! Open a discussion if you'd like to add more services or improve the stack.
+Arun — backend engineer focused on clarity, reliability, and observability.
+
+---
+
+## 🤝 Contributing
+
+Issues and PRs are welcome. Open a discussion if you want to add services or improve the stack.
 
 
 
