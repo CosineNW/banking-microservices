@@ -1,4 +1,4 @@
-# 🏦 Banking Microservices
+# Banking Microservices
 
 A fully modular, observable, and scalable backend architecture for a fictional banking system. Built with Spring Boot microservices, Kafka, Docker Compose, Prometheus, Grafana, and (optional) OpenTelemetry.
 
@@ -12,7 +12,7 @@ For comprehensive documentation, see:
 
 ---
 
-## 📦 Microservices
+## Microservices
 
 | Service               | Description                                        |
 |----------------------|----------------------------------------------------|
@@ -26,7 +26,7 @@ For comprehensive documentation, see:
 
 ---
 
-## 🚀 Features
+## Features
 
 - Kafka-based event-driven communication (producers/consumers)
 - Metrics via Micrometer on /actuator/prometheus
@@ -36,7 +36,7 @@ For comprehensive documentation, see:
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - Spring Boot 3.x (Java 17/21)
 - Apache Kafka
@@ -47,7 +47,7 @@ For comprehensive documentation, see:
 
 ---
 
-## 📊 Observability Architecture
+## Observability Architecture
 
 [Client] → [Gateway] → [Microservices]  
 [Microservices] → [/actuator/prometheus] → [Prometheus] → [Grafana]  
@@ -55,7 +55,7 @@ For comprehensive documentation, see:
 
 ---
 
-## 🧪 Running Locally (Compose)
+## Running Locally (Compose)
 
 Dockerfiles copy built JARs from target/, so build each service first:
 
@@ -85,7 +85,7 @@ Useful URLs:
 
 ---
 
-## 📚 Repository Layout
+## Repository Layout
 
 banking-microservices/
 ├── customer-service/
@@ -105,10 +105,10 @@ Each service contains:
 
 ---
 
-## 🧠 Maintainer
+## Maintainer
 Arun — backend engineer focused on clarity, reliability, and observability.
 
-## 💡 Contributing
+## Contributing
 PRs and issues welcome. Open a discussion to add services or improve the stack.
 
 
