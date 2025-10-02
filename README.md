@@ -1,105 +1,115 @@
 # 🏦 Banking Microservices
 
-A fully modular, observable, and scalable backend architecture for a fictional banking system. Built with Spring Boot, Kafka, Docker Compose, and integrated observability using Prometheus, Grafana, and OpenTelemetry.
+A fully modular, observable, and scalable backend architecture for a fictional banking system. Built with Spring Boot microservices, Kafka, Docker Compose, Prometheus, Grafana, and (optional) OpenTelemetry.
+
+For comprehensive documentation, see:
+- docs/README.md (index)
+- docs/architecture.md
+- docs/services.md
+- docs/eventing.md
+- docs/observability.md
+- docs/local-development.md
 
 ---
 
 ## 📦 Microservices
 
-| Service           | Description                             |
-|-------------------|-----------------------------------------|
-| `transaction-service` | Handles customer transactions and events |
-| `account-service`     | Manages account creation and details   |
-| `notification-service`| Sends email/SMS alerts via Kafka events|
-| `customer-service`    | CRUD operations for customer profiles  |
-| `gateway-service`     | API Gateway routing and security       |
-| `discovery-service`   | Service registry using Eureka          |
+| Service               | Description                                        |
+|----------------------|----------------------------------------------------|
+| `service-registry`   | Eureka-based service discovery                     |
+| `gateway-service`    | Spring Cloud Gateway routing and filters           |
+| `customer-service`   | CRUD for customer profiles and reward points       |
+| `transaction-service`| Transaction CRUD and event publishing              |
+| `reward-service`     | Reward record persistence and query (event consumer) |
+| `preference-service` | Manages user notification preferences (event producer) |
+| `notification-service`| Consumes events and sends notifications (email)   |
 
 ---
 
 ## 🚀 Features
 
-- Kafka-based event-driven communication across microservices
-- OpenTelemetry-based distributed tracing
-- Metrics collection with Prometheus
-- Dashboards via Grafana
+- Kafka-based event-driven communication (producers/consumers)
+- Metrics via Micrometer on /actuator/prometheus
 - Docker Compose orchestration for local testing
-- Clean code structure with modular DTOs and error handling
+- Prometheus + Grafana for dashboards
+- Optional distributed tracing via OpenTelemetry Collector
 
 ---
 
 ## 🧰 Tech Stack
 
-- **Spring Boot** (Java 17)
-- **Apache Kafka**
-- **Docker & Docker Compose**
-- **Prometheus & Grafana**
-- **OpenTelemetry Collector**
-- **Spring Cloud Gateway + Eureka Discovery**
+- Spring Boot 3.x (Java 17/21)
+- Apache Kafka
+- Spring Cloud Gateway + Eureka
+- JPA (MySQL/H2)
+- Prometheus & Grafana
+- OpenTelemetry Collector
 
 ---
 
 ## 📊 Observability Architecture
 
-[Microservices] → [OpenTelemetry Collector] → [Prometheus] → [Grafana] | [Jaeger or OTEL backend]
-
-
-Each microservice is instrumented for tracing and exposes Prometheus-compatible metrics for seamless debugging and visualization.
+[Client] → [Gateway] → [Microservices]  
+[Microservices] → [/actuator/prometheus] → [Prometheus] → [Grafana]  
+[Microservices] → [OTLP → OTEL Collector] → [Debug logs (default), add a trace backend as needed]
 
 ---
 
-## 🧪 Running Locally
+## 🧪 Running Locally (Compose)
+
+Dockerfiles copy built JARs from target/, so build each service first:
 
 ```bash
-# Build all services
-./mvn clean build
+# From repo root, build JARs (example)
+cd customer-service && mvn -q -DskipTests package && cd ..
+cd transaction-service && mvn -q -DskipTests package && cd ..
+cd reward-service && mvn -q -DskipTests package && cd ..
+cd preference-service && mvn -q -DskipTests package && cd ..
+cd notification-service && mvn -q -DskipTests package && cd ..
+cd service-registry && mvn -q -DskipTests package && cd ..
+cd gateway-service && mvn -q -DskipTests package && cd ..
+```
 
-# Start entire stack
- docker compose up --build ```
+Start the stack:
 
+```bash
+cd Infra
+docker compose up --build
+```
 
- 📈 Grafana: http://localhost:3000
+Useful URLs:
+- Grafana: http://localhost:3000
+- Prometheus: http://localhost:9090
+- Eureka: http://localhost:8762
+- Gateway: http://localhost:8185
 
-🔍 Eureka Dashboard: http://localhost:8761
-
-📡 Gateway: http://localhost:8080
+---
 
 ## 📚 Repository Layout
 
-  banking-microservices/
-├── transaction-service/
-├── account-service/
-├── notification-service/
+banking-microservices/
 ├── customer-service/
+├── transaction-service/
+├── reward-service/
+├── notification-service/
+├── preference-service/
 ├── gateway-service/
-├── discovery-service/
-├── docker-compose.yml
-└── README.md
+├── service-registry/
+├── Infra/
+└── docs/
 
 Each service contains:
+- src/: Spring Boot source
+- resources/: config (Kafka, Actuator, etc.)
+- Dockerfile: containerization
 
-/src: Spring Boot source
-
-/config: Kafka & OpenTelemetry setup
-
-Dockerfile: Containerization
-
-## 📝 Project Goals
-  ✅ Documented and modular microservices
-
-  ✅ Push code to GitHub with structure
-
-  ✅ Validate system with Docker Compose
-
-  🧭 Deploy to AWS or GCP (planned)
-
-  🔁 Implement CI/CD (planned)
+---
 
 ## 🧠 Maintainer
-    Arun, a backend engineer obsessed with clarity, reliability, and observability. 📌 Expertise in Kafka, tracing, and scalable system design.
+Arun — backend engineer focused on clarity, reliability, and observability.
 
 ## 💡 Contributing
-    PRs and issues welcome! Open a discussion if you'd like to add more services or improve the stack.
+PRs and issues welcome. Open a discussion to add services or improve the stack.
 
 
 
